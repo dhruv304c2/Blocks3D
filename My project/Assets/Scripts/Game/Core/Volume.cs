@@ -12,6 +12,7 @@ namespace Game.Core
         
         //Data
         private Dictionary<Vector3Int, UnitCell> _cells = new Dictionary<Vector3Int, UnitCell>();
+        public Dictionary<Vector3Int, UnitCell> Cells => _cells;
         private int _height;
         private int _width;
         private int _depth;

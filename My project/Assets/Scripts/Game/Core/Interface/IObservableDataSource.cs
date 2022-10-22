@@ -5,9 +5,10 @@ namespace Game.Core.Interface
 {
     public interface IObservableDataSource<T>
     {
+        T Self => (T)this;
         Action OnDataSourceChanged { get; set; }
 
-        void SubscribeTo(IDataService<T> service)
+        public void SubscribeTo(IDataService<T> service)
         {
             OnDataSourceChanged ??= () => { };
             OnDataSourceChanged = service.DataService;

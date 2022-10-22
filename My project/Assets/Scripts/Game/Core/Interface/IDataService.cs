@@ -2,7 +2,7 @@
 {
     public interface IDataService<T>
     {
-        T DataSource { get; set; }
+        IObservableDataSource<T> DataSource { get; set; }
 
         void DataService();
     }

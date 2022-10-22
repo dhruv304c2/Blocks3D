@@ -10,6 +10,7 @@ namespace Game.Core
         private int _y;
         private int _z;
         public bool Filled { get; private set; }
+        public GameObject BlockObject;
 
         public UnitCell(int x, int y, int z)
         {
