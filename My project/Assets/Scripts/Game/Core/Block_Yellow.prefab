@@ -303,6 +303,7 @@ GameObject:
   - component: {fileID: 3499903700617012100}
   - component: {fileID: 6964428360162205007}
   - component: {fileID: 7355141995071995881}
+  - component: {fileID: -7203640480156855917}
   m_Layer: 0
   m_Name: Block_Yellow
   m_TagString: Untagged
@@ -395,6 +396,19 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &-7203640480156855917
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 735260319273749988}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ed76376fae5241b8a3da9a6c4022055c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  initialised: 0
 --- !u!1 &822489572649470234
 GameObject:
   m_ObjectHideFlags: 0
