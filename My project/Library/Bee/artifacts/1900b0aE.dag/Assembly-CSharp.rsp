@@ -356,7 +356,12 @@
 -r:"Library/Bee/artifacts/1900b0aE.dag/Unity.VSCode.Editor.ref.dll"
 -r:"Library/Bee/artifacts/1900b0aE.dag/UnityEditor.UI.ref.dll"
 -r:"Library/Bee/artifacts/1900b0aE.dag/UnityEngine.UI.ref.dll"
-"Assets/Scripts/UnitCell.cs"
+"Assets/Scripts/Game/Core/Interface/IDataRenderer.cs"
+"Assets/Scripts/Game/Core/Interface/IDataService.cs"
+"Assets/Scripts/Game/Core/Interface/IObservableDataSource.cs"
+"Assets/Scripts/Game/Core/UnitCell.cs"
+"Assets/Scripts/Game/Core/Volume.cs"
+"Assets/Scripts/Game/Core/VolumeRenderer.cs"
 -langversion:9.0
 
 /deterministic
