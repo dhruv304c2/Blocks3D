@@ -7,14 +7,9 @@ namespace Game.Core
 {
     public abstract class MonoPoolable<T>: MonoBehaviour, IPoolable<T> where T : MonoBehaviour
     {
-        public Transform ObjectPool => GameObject.Find($"{transform.name} Pool").transform;
-
-        [SerializeField] private bool initialised = false;
-        public bool Initialised
-        {
-            get => initialised;
-            set => initialised = value;
-        }
+        public Transform ObjectPool => GameObject.Find($"{transform.name} Pool")?.transform;
+        
+        public bool Initialised => ObjectPool != null; 
 
         public void Dispose()
         {
@@ -59,10 +54,11 @@ namespace Game.Core
                 size--;
             }
 
-            Initialised = true;
+            //Initialised = true;
         }
 
         protected abstract void OnDispose();
         protected abstract void OnSpawn();
+        
     }
 }
