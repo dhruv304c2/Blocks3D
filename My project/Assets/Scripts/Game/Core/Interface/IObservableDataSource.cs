@@ -10,6 +10,7 @@ namespace Game.Core.Interface
 
         public void SubscribeTo(IDataService<T> service)
         {
+            service.DataSource = this;
             OnDataSourceChanged ??= () => { };
             OnDataSourceChanged = service.DataService;
         }

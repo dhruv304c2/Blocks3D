@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Game.Core.Interface;
+using Game.Core.Types;
 using UnityEngine;
 
 namespace Game.Core
@@ -13,9 +14,15 @@ namespace Game.Core
         //Data
         private Dictionary<Vector3Int, UnitCell> _cells = new Dictionary<Vector3Int, UnitCell>();
         public Dictionary<Vector3Int, UnitCell> Cells => _cells;
+        
         private int _height;
+        public int Height => _height;
+        
         private int _width;
+        public int Width => _width;
+        
         private int _depth;
+        public int Depth => _depth;
         
         public Volume(int height, int width, int depth)
         {
@@ -29,16 +36,16 @@ namespace Game.Core
                 {
                     for (int k = 0; k < _depth; k++)
                     {
-                        _cells[new Vector3Int(i, j, k)] = new UnitCell(i, j, k);
+                        _cells[new Vector3Int(i, j, k)] = new UnitCell(new Vector3Int(i, j, k));
                     }
                 }
             }
         }
         
         // Volume Updates
-        public void FillCellAtLocation(Vector3Int position)
+        public void FillCellAtLocation(Vector3Int position, BlockColor color)
         {
-            _cells[position].Fill();
+            _cells[position].Fill(color);
             OnDataSourceChanged.Invoke();
         }
 
