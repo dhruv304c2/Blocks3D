@@ -43,9 +43,9 @@ namespace Game.Core
         }
         
         // Volume Updates
-        public void FillCellAtLocation(Vector3Int position, BlockColor color)
+        public void FillCellAtLocation(Vector3Int position, BlockColor color, bool isFloater = false)
         {
-            _cells[position].Fill(color);
+            _cells[position].Fill(color, isFloater);
             OnDataSourceChanged.Invoke();
         }
 

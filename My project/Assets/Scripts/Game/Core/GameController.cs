@@ -27,17 +27,17 @@ namespace Game.Core
                 }
             }
 
-            _activeFloater = new Floater().InVolume(GameVolume.Self, new Vector3Int(3, 9, 3)).WithColor(BlockColor.Red);
+            _activeFloater = new Floater().InVolume(GameVolume.Self, new Vector3Int(3, 9, 3), FloaterType.S).WithColor(BlockColor.Red);
         }
 
         private void Update()
         {
             if (Input.GetKeyDown(KeyCode.DownArrow)) _activeFloater.MoveDown();
-            if (Input.GetKeyDown(KeyCode.UpArrow)) _activeFloater.MoveUp();
-            if (Input.GetKeyDown(KeyCode.W)) _activeFloater.MoveForward();
-            if (Input.GetKeyDown(KeyCode.S)) _activeFloater.MoveBack();
-            if (Input.GetKeyDown(KeyCode.A)) _activeFloater.MoveLeft();
-            if (Input.GetKeyDown(KeyCode.D)) _activeFloater.MoveRight();
+            else if (Input.GetKeyDown(KeyCode.UpArrow)) _activeFloater.MoveUp();
+            else if (Input.GetKeyDown(KeyCode.W)) _activeFloater.MoveForward();
+            else if (Input.GetKeyDown(KeyCode.S)) _activeFloater.MoveBack();
+            else if (Input.GetKeyDown(KeyCode.A)) _activeFloater.MoveLeft();
+            else if (Input.GetKeyDown(KeyCode.D)) _activeFloater.MoveRight();
         }
     }
 }

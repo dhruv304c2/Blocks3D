@@ -11,24 +11,26 @@ namespace Game.Core
         private Vector3Int _position;
         public Vector3Int Postiton => _position;
         public bool Filled { get; private set; }
+        public bool IsFloater { get; private set; } = false;
         public BlockColor Color { get; set; }
-        public GameObject BlockObject;
 
         public UnitCell(Vector3Int position)
         {
             _position = position;
         }
 
-        public UnitCell Fill(BlockColor color)
+        public UnitCell Fill(BlockColor color, bool isFloater = false)
         {
             Filled = true;
             Color = color;
+            IsFloater = isFloater;
             return this;
         }
 
         public UnitCell Clear()
         {
             Filled = false;
+            IsFloater = false;
             return this;
         } 
     }

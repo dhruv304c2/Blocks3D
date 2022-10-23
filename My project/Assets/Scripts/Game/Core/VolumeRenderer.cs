@@ -9,8 +9,10 @@ using UnityEngine;
 public class VolumeRenderer : MonoBehaviour, IDataRenderer<Volume>
 {
     // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
+        if( !RedBlockPrefab.Initialised ) RedBlockPrefab.InitialisePool(500);
+        if( !YellowBlockPrefab.Initialised ) YellowBlockPrefab.InitialisePool(500);
     }
 
     // Update is called once per frame
@@ -24,27 +26,24 @@ public class VolumeRenderer : MonoBehaviour, IDataRenderer<Volume>
 
     public void RenderData()
     {
-        if( !RedBlockPrefab.Initialised ) RedBlockPrefab.InitialisePool(500);
-        if( !YellowBlockPrefab.Initialised ) YellowBlockPrefab.InitialisePool(500);
+        
+        //Disposing all active blocks and resetting the list
+        foreach (var block in ActiveBlocks)
+        {
+            block.Dispose();
+        }
+
+        ActiveBlocks = new List<MonoPoolableBlock>();
         
         foreach (var kvp in DataSource.Self.Cells)
         {
-            if (kvp.Value.BlockObject != null)
-            {
-                kvp.Value.BlockObject.GetComponent<MonoPoolableBlock>().Dispose();
-            }
-            
-            if (kvp.Value.Filled == true)
+            if (kvp.Value.Filled)
             {
                 MonoPoolableBlock pool = GetBlock(kvp.Value.Color);
                 var b = pool.Spawn();
                 b.transform.parent = transform;
                 b.transform.localPosition = kvp.Key;
-                kvp.Value.BlockObject = b.gameObject;
-            }
-            else
-            {
-                
+                ActiveBlocks.Add(b);
             }
         }
     }
@@ -66,4 +65,5 @@ public class VolumeRenderer : MonoBehaviour, IDataRenderer<Volume>
     public Transform Base;
     public MonoPoolableBlock RedBlockPrefab;
     public MonoPoolableBlock YellowBlockPrefab;
+    public List<MonoPoolableBlock> ActiveBlocks;
 }
