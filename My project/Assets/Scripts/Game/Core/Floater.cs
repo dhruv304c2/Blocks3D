@@ -8,10 +8,12 @@ namespace Game.Core
     public class Floater
     {
         private Volume _volume;
+        private BlockConstructionVectors _myConstructionVector = new BlockConstructionVectors();
+        
         public Vector3Int Center;
-        public Vector3Int Cell1 => Center + GetConstructionVectors(_type).Vector1;
-        public Vector3Int Cell2 => Center + GetConstructionVectors(_type).Vector2;
-        public Vector3Int Cell3 => Center + GetConstructionVectors(_type).Vector3;
+        public Vector3Int Cell1 => Center + _myConstructionVector.Vector1;
+        public Vector3Int Cell2 => Center + _myConstructionVector.Vector2;
+        public Vector3Int Cell3 => Center + _myConstructionVector.Vector3;
 
         private BlockColor _color;
         private FloaterType _type;
@@ -21,6 +23,7 @@ namespace Game.Core
             _volume = volume;
             Center = new Vector3Int(_volume.Width / 2, _volume.Height / 2, _volume.Depth -4);
             _type = type;
+            _myConstructionVector.GetConstructionVectors(_type);
             FillMe();
             return this;
         }
@@ -183,46 +186,81 @@ namespace Game.Core
             return false;
         }
 
+        public void RotateAlongZ()
+        {
+            ClearMe();
+            _myConstructionVector.RotateAlongZBy(BlockRotation.PiBy2);
+            FillMe();
+        }
+
         //======CONSTRUCTION OF FLOATERS BASED ON CONSTRUCTION VECTORS============//
 
-        public struct BlockConstructionVectors
+        public class BlockConstructionVectors
         {
             public Vector3Int Vector1;
             public Vector3Int Vector2;
             public Vector3Int Vector3;
-        }
-        
-        public BlockConstructionVectors GetConstructionVectors(FloaterType type)
-        {
-            BlockConstructionVectors bcv = new BlockConstructionVectors();
-            switch (type)
+            
+            public BlockConstructionVectors GetConstructionVectors(FloaterType type)
             {
-                case FloaterType.I:
-                    bcv.Vector1 = new Vector3Int(0, 2, 0);
-                    bcv.Vector2 = new Vector3Int(0, 1, 0);
-                    bcv.Vector3 = new Vector3Int(0, -1, 0);
-                    return bcv;
-                case FloaterType.L:
-                    bcv.Vector1 = new Vector3Int(0, 1, 0);
-                    bcv.Vector2 = new Vector3Int(0, -1, 0);
-                    bcv.Vector3 = new Vector3Int(1, -1, 0);
-                    return bcv;
-                case FloaterType.O:
-                    bcv.Vector1 = new Vector3Int(-1, 0, 0);
-                    bcv.Vector2 = new Vector3Int(0, -1, 0);
-                    bcv.Vector3 = new Vector3Int(-1, -1, 0);
-                    return bcv;
-                case FloaterType.S:
-                    bcv.Vector1 = new Vector3Int(1, 0, 0);
-                    bcv.Vector2 = new Vector3Int(0, -1, 0);
-                    bcv.Vector3 = new Vector3Int(-1, -1, 0);
-                    return bcv;
-                default:
-                    bcv.Vector1 = new Vector3Int(-1, 0, 0);
-                    bcv.Vector2 = new Vector3Int(1, 0, 0);
-                    bcv.Vector3 = new Vector3Int(0, -1, 0);
-                    return bcv;
+                switch (type)
+                {
+                    case FloaterType.I:
+                        Vector1 = new Vector3Int(0, 2, 0);
+                        Vector2 = new Vector3Int(0, 1, 0);
+                        Vector3 = new Vector3Int(0, -1, 0);
+                        break;
+                    case FloaterType.L:
+                        Vector1 = new Vector3Int(0, 1, 0);
+                        Vector2 = new Vector3Int(0, -1, 0);
+                        Vector3 = new Vector3Int(1, -1, 0);
+                        break;
+                    case FloaterType.O:
+                        Vector1 = new Vector3Int(-1, 0, 0);
+                        Vector2 = new Vector3Int(0, -1, 0);
+                        Vector3 = new Vector3Int(-1, -1, 0);
+                        break;
+                    case FloaterType.S:
+                        Vector1 = new Vector3Int(1, 0, 0);
+                        Vector2 = new Vector3Int(0, -1, 0);
+                        Vector3 = new Vector3Int(-1, -1, 0);
+                        break;
+                    default:
+                        Vector1 = new Vector3Int(-1, 0, 0);
+                        Vector2 = new Vector3Int(1, 0, 0);
+                        Vector3 = new Vector3Int(0, -1, 0);
+                        break;
+                }
+
+                return this;
+            }
+
+            public BlockConstructionVectors RotateAlongZBy(BlockRotation rotation)
+            {
+                switch (rotation)
+                {
+                    case BlockRotation.Zero:
+                        break;
+                    case BlockRotation.PiBy2:
+                        Vector1 = new Vector3Int(-Vector1.y, Vector1.x, Vector1.z);
+                        Vector2 = new Vector3Int(-Vector2.y, Vector2.x, Vector2.z);
+                        Vector3 = new Vector3Int(-Vector3.y, Vector3.x, Vector3.z);
+                        break;
+                    case BlockRotation.Pi:
+                        Vector1 = new Vector3Int(-Vector1.x, -Vector1.y, Vector1.z);
+                        Vector2 = new Vector3Int(-Vector2.x, -Vector2.y, Vector2.z);
+                        Vector3 = new Vector3Int(-Vector3.x, -Vector3.y, Vector3.z);
+                        break;
+                    case BlockRotation._3PiBy2:
+                        Vector1 = new Vector3Int(Vector1.y, -Vector1.x, Vector1.z);
+                        Vector2 = new Vector3Int(Vector2.y, -Vector2.x, Vector2.z);
+                        Vector3 = new Vector3Int(Vector3.y, -Vector3.x, Vector3.z);
+                        break;
+                }
+                return this;
             }
         }
+        
+        
     }
 }
