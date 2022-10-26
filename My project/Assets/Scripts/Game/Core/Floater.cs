@@ -15,6 +15,79 @@ namespace Game.Core
         public Vector3Int Cell2 => Center + _myConstructionVector.Vector2;
         public Vector3Int Cell3 => Center + _myConstructionVector.Vector3;
 
+        public Vector3Int MinXCell
+        {
+            get
+            {
+                var min = Mathf.Min(Center.x, Cell1.x, Cell2.x, Cell3.x);
+                if (min == Center.x) return Center;
+                else if (min == Cell1.x) return Cell1;
+                else if (min == Cell2.x) return Cell2;
+                else return Cell3;
+            }
+        }
+        
+        public Vector3Int MaxXCell
+        {
+            get
+            {
+                var max = Mathf.Max(Center.x, Cell1.x, Cell2.x, Cell3.x);
+                if (max == Center.x) return Center;
+                else if (max == Cell1.x) return Cell1;
+                else if (max == Cell2.x) return Cell2;
+                else return Cell3;
+            }
+        }
+        
+        public Vector3Int MinYCell
+        {
+            get
+            {
+                var min = Mathf.Min(Center.y, Cell1.y, Cell2.y, Cell3.y);
+                if (min == Center.y) return Center;
+                else if (min == Cell1.y) return Cell1;
+                else if (min == Cell2.y) return Cell2;
+                else return Cell3;
+            }
+        }
+        
+        public Vector3Int MaxYCell
+        {
+            get
+            {
+                var max = Mathf.Max(Center.y, Cell1.y, Cell2.y, Cell3.y);
+                if (max == Center.y) return Center;
+                else if (max == Cell1.y) return Cell1;
+                else if (max == Cell2.y) return Cell2;
+                else return Cell3;
+            }
+        }
+        
+        public Vector3Int MinZCell
+        {
+            get
+            {
+                var min = Mathf.Min(Center.z, Cell1.z, Cell2.z, Cell3.z);
+                if (min == Center.z) return Center;
+                else if (min == Cell1.z) return Cell1;
+                else if (min == Cell2.z) return Cell2;
+                else return Cell3;
+            }
+        }
+        
+        public Vector3Int MaxZCell
+        {
+            get
+            {
+                var max = Mathf.Max(Center.z, Cell1.z, Cell2.z, Cell3.z);
+                if (max == Center.z) return Center;
+                else if (max == Cell1.z) return Cell1;
+                else if (max == Cell2.z) return Cell2;
+                else return Cell3;
+            }
+        }
+
+
         private BlockColor _color;
         private FloaterType _type;
 
@@ -187,7 +260,20 @@ namespace Game.Core
             }
             return false;
         }
-        
+
+        public bool TryShiftToFit()
+        {
+            //Shift To Contain
+            while (MinXCell.x < 0) { Center += Vector3Int.right; }
+            while (MaxXCell.x > _volume.Width -1 ) { Center += Vector3Int.left; }
+            while (MinYCell.y < 0) { Center += Vector3Int.up; }
+            while (MaxYCell.y > _volume.Height -1 ) { Center += Vector3Int.down; }
+            while (MinZCell.z < 0) { Center += Vector3Int.forward; }
+            while (MaxZCell.z > _volume.Depth -1 ) { Center += Vector3Int.back; }
+            
+            //Check if new configuration is Valid
+            return CanMoveTo(Center) && CanMoveTo(Cell1) && CanMoveTo(Cell2) && CanMoveTo(Cell3);
+        }
 
         #endregion
 
@@ -196,7 +282,13 @@ namespace Game.Core
         public void RotateAlongZ()
         {
             ClearMe();
+            var tempVec = _myConstructionVector;
             _myConstructionVector.RotateAlongZBy(BlockRotation.PiBy2);
+            if (TryShiftToFit() == false)
+            {
+                _myConstructionVector.RotateAlongZBy(BlockRotation._3PiBy2);
+                Debug.Log("Rotation Along Z Failed");
+            }
             FillMe();
         }
         

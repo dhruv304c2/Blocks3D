@@ -27,7 +27,7 @@ namespace Game.Core
                 }
             }
 
-            _activeFloater = new Floater().InVolume(GameVolume.Self, new Vector3Int(3, 9, 3), FloaterType.S).WithColor(BlockColor.Red);
+            _activeFloater = new Floater().InVolume(GameVolume.Self, new Vector3Int(3, 9, 3), FloaterType.I).WithColor(BlockColor.Red);
         }
 
         private void Update()
