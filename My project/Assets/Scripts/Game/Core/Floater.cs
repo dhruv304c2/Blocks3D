@@ -56,7 +56,9 @@ namespace Game.Core
         
         
         //============== FLOATER MOVEMENT LOGIC ===============//
-        
+
+
+        #region Translation Logic
         public void MoveDown()
         {
             //Checking if all the blocks can be moved to next position
@@ -185,6 +187,11 @@ namespace Game.Core
             }
             return false;
         }
+        
+
+        #endregion
+
+        #region Rotation Logic
 
         public void RotateAlongZ()
         {
@@ -192,6 +199,23 @@ namespace Game.Core
             _myConstructionVector.RotateAlongZBy(BlockRotation.PiBy2);
             FillMe();
         }
+        
+        public void RotateAlongY()
+        {
+            ClearMe();
+            _myConstructionVector.RotateAlongYBy(BlockRotation.PiBy2);
+            FillMe();
+        }
+
+        public void RotateAlongX()
+        {
+            ClearMe();
+            _myConstructionVector.RotateAlongXBy(BlockRotation.PiBy2);
+            FillMe();
+        }
+
+        #endregion
+        
 
         //======CONSTRUCTION OF FLOATERS BASED ON CONSTRUCTION VECTORS============//
 
@@ -258,6 +282,56 @@ namespace Game.Core
                         break;
                 }
                 return this;
+            }
+
+            public BlockConstructionVectors RotateAlongYBy(BlockRotation rotation)
+            {
+                switch (rotation)
+                {
+                    case BlockRotation.Zero:
+                        break;
+                    case BlockRotation.PiBy2:
+                        Vector1 = new Vector3Int(Vector1.z, Vector1.y, -Vector1.x);
+                        Vector2 = new Vector3Int(Vector2.z, Vector2.y, -Vector2.x);
+                        Vector3 = new Vector3Int(Vector3.z, Vector3.y, -Vector3.x);
+                        break;
+                    case BlockRotation.Pi:
+                        Vector1 = new Vector3Int(Vector1.x, Vector1.y, -Vector1.z);
+                        Vector2 = new Vector3Int(Vector2.x, Vector2.y, -Vector2.z);
+                        Vector3 = new Vector3Int(Vector3.x, Vector3.y, -Vector3.z);
+                        break;
+                    case BlockRotation._3PiBy2:
+                        Vector1 = new Vector3Int(-Vector1.z, Vector1.y, Vector1.x);
+                        Vector2 = new Vector3Int(-Vector2.z, Vector2.y, Vector2.x);
+                        Vector3 = new Vector3Int(-Vector3.z, Vector3.y, Vector3.x);
+                        break;
+                }
+                return this;
+            }
+
+            public BlockConstructionVectors RotateAlongXBy(BlockRotation rotation)
+            {
+                switch (rotation)
+                {
+                    case BlockRotation.Zero:
+                        break;
+                    case BlockRotation.PiBy2:
+                        Vector1 = new Vector3Int(Vector1.x, -Vector1.z, Vector1.y);
+                        Vector2 = new Vector3Int(Vector2.x, -Vector2.z, Vector2.y);
+                        Vector3 = new Vector3Int(Vector3.x, -Vector3.z, Vector3.y);
+                        break;
+                    case BlockRotation.Pi:
+                        Vector1 = new Vector3Int(Vector1.x, -Vector1.y, -Vector1.z);
+                        Vector2 = new Vector3Int(Vector2.x, -Vector2.y, -Vector2.z);
+                        Vector3 = new Vector3Int(Vector3.x, -Vector3.y, -Vector3.z);
+                        break;
+                    case BlockRotation._3PiBy2:
+                        Vector1 = new Vector3Int(Vector1.x, Vector1.z, -Vector1.y);
+                        Vector2 = new Vector3Int(Vector2.x, Vector2.z, -Vector2.y);
+                        Vector3 = new Vector3Int(Vector3.x, Vector3.z, -Vector3.y);
+                        break;
+                }
+                return this;    
             }
         }
         

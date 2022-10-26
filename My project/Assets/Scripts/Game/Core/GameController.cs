@@ -27,7 +27,7 @@ namespace Game.Core
                 }
             }
 
-            _activeFloater = new Floater().InVolume(GameVolume.Self, new Vector3Int(3, 9, 3), FloaterType.L).WithColor(BlockColor.Red);
+            _activeFloater = new Floater().InVolume(GameVolume.Self, new Vector3Int(3, 9, 3), FloaterType.S).WithColor(BlockColor.Red);
         }
 
         private void Update()
@@ -39,7 +39,8 @@ namespace Game.Core
             else if (Input.GetKeyDown(KeyCode.A)) _activeFloater.MoveLeft();
             else if (Input.GetKeyDown(KeyCode.D)) _activeFloater.MoveRight();
             else if (Input.GetKeyDown(KeyCode.Z)) _activeFloater.RotateAlongZ();
-            else if (Input.GetKey(KeyCode.LeftShift) && Input.GetKeyDown(KeyCode.Z)) _activeFloater.RotateAlongZ();
+            else if (Input.GetKeyDown(KeyCode.Y)) _activeFloater.RotateAlongY();
+            else if (Input.GetKeyDown(KeyCode.X)) _activeFloater.RotateAlongX();
         }
     }
 }
