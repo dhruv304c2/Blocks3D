@@ -261,7 +261,7 @@ namespace Game.Core
             return false;
         }
 
-        public bool TryShiftToFit()
+        public bool TryKick()
         {
             //Shift To Contain
             while (MinXCell.x < 0) { Center += Vector3Int.right; }
@@ -282,9 +282,8 @@ namespace Game.Core
         public void RotateAlongZ()
         {
             ClearMe();
-            var tempVec = _myConstructionVector;
             _myConstructionVector.RotateAlongZBy(BlockRotation.PiBy2);
-            if (TryShiftToFit() == false)
+            if (TryKick() == false)
             {
                 _myConstructionVector.RotateAlongZBy(BlockRotation._3PiBy2);
                 Debug.Log("Rotation Along Z Failed");
@@ -296,6 +295,11 @@ namespace Game.Core
         {
             ClearMe();
             _myConstructionVector.RotateAlongYBy(BlockRotation.PiBy2);
+            if (TryKick() == false)
+            {
+                _myConstructionVector.RotateAlongYBy(BlockRotation._3PiBy2);
+                Debug.Log("Rotation Along Y Failed");
+            }
             FillMe();
         }
 
@@ -303,6 +307,11 @@ namespace Game.Core
         {
             ClearMe();
             _myConstructionVector.RotateAlongXBy(BlockRotation.PiBy2);
+            if (TryKick() == false)
+            {
+                _myConstructionVector.RotateAlongXBy(BlockRotation._3PiBy2);
+                Debug.Log("Rotation Along X Failed");
+            }
             FillMe();
         }
 
