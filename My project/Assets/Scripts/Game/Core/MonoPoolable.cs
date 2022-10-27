@@ -22,7 +22,7 @@ namespace Game.Core
         {
             if (Initialised == false)
             {
-                Debug.Log($"Object pool not initialised for {transform.name}");
+                Debug.Log($"{transform.name} Object pool not initialised");
                 return null;
             }
 
@@ -37,7 +37,7 @@ namespace Game.Core
 
             else
             {
-                Debug.Log($"Object is empty");
+                Debug.Log($"{transform.name} Object pool is empty");
                 return null;
             }
         }

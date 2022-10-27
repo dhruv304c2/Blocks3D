@@ -12,7 +12,7 @@ namespace Game.Core.Interface
         {
             service.DataSource = this;
             OnDataSourceChanged ??= () => { };
-            OnDataSourceChanged = service.DataService;
+            OnDataSourceChanged += service.DataService;
         }
     }
 }

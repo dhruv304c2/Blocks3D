@@ -1,5 +1,6 @@
 ﻿using System;
 using Game.Core.Interface;
+using Game.Core.Renderers;
 using Game.Core.Types;
 using UnityEngine;
 
@@ -9,12 +10,14 @@ namespace Game.Core
     {
         private IObservableDataSource<Volume> GameVolume;
         public VolumeRenderer VolumeRenderer;
+        public HintBlockRenderer HintBlockRenderer;
 
         private Floater _activeFloater;
         private void Start()
         {
             GameVolume = new Volume(10, 5, 5);
             GameVolume.SubscribeTo(VolumeRenderer);
+            GameVolume.SubscribeTo(HintBlockRenderer);
             
             for (int i = 0; i < 5; i++)
             {

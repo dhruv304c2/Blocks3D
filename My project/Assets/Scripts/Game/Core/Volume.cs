@@ -46,13 +46,30 @@ namespace Game.Core
         public void FillCellAtLocation(Vector3Int position, BlockColor color, bool isFloater = false)
         {
             _cells[position].Fill(color, isFloater);
-            OnDataSourceChanged.Invoke();
+            try
+            {
+                OnDataSourceChanged.Invoke();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
+            
         }
 
         public void ClearCellAtLocation(Vector3Int position)
         {
             _cells[position].Clear();
-            OnDataSourceChanged.Invoke();
+            try
+            {
+                OnDataSourceChanged.Invoke();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
         }
 
     }
