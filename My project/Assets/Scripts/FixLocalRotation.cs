@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class FixLocalRotation : MonoBehaviour
 {
-    void Update()
+    void LateUpdate()
     {
         transform.localEulerAngles = Vector3.zero;
     }
