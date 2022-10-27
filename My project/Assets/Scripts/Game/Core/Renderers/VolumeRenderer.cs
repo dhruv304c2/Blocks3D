@@ -15,8 +15,10 @@ namespace Game.Core.Renderers
     {
         void Awake()
         {
-            if( !redBlockPrefab.Initialised ) redBlockPrefab.InitialisePool(500);
+            if( !orangeBlockPrefab.Initialised ) orangeBlockPrefab.InitialisePool(500);
             if( !yellowBlockPrefab.Initialised ) yellowBlockPrefab.InitialisePool(500);
+            if( !greenBlockPrefab.Initialised ) greenBlockPrefab.InitialisePool(500);
+            if( !purpleBlockPrefab.Initialised ) purpleBlockPrefab.InitialisePool(500);
         }
         
         //Data Renderer Implementation
@@ -51,10 +53,14 @@ namespace Game.Core.Renderers
         {
             switch (blockColor)
             {
-                case BlockColor.Red:
-                    return redBlockPrefab;
+                case BlockColor.Orange:
+                    return orangeBlockPrefab;
                 case BlockColor.Yellow:
                     return yellowBlockPrefab;
+                case BlockColor.Green:
+                    return greenBlockPrefab;
+                case BlockColor.Purple:
+                    return purpleBlockPrefab;
             }
     
             return null;
@@ -64,9 +70,10 @@ namespace Game.Core.Renderers
         
         
         //Pool-able Blocks
-        public MonoPoolableBlock redBlockPrefab;
+        public MonoPoolableBlock orangeBlockPrefab;
         public MonoPoolableBlock yellowBlockPrefab;
-        
+        public MonoPoolableBlock greenBlockPrefab;
+        public MonoPoolableBlock purpleBlockPrefab;
     }
 }
 

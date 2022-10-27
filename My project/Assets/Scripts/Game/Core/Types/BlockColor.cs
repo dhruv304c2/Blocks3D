@@ -2,7 +2,9 @@
 {
     public enum BlockColor
     {
-        Red,
-        Yellow
+        Orange,
+        Yellow,
+        Green,
+        Purple
     }
 }

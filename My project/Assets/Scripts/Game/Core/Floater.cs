@@ -92,23 +92,23 @@ namespace Game.Core
         private BlockColor _color;
         private FloaterType _type;
 
-        public Floater InVolume(Volume volume, Vector3Int startPos, FloaterType type)
+        public Floater InVolume(Volume volume, FloaterType type)
         {
             _volume = volume;
-            Center = new Vector3Int(_volume.Width / 2, _volume.Height / 2, _volume.Depth -4);
+            Center = new Vector3Int(_volume.Width / 2, _volume.Height - 4 , _volume.Depth/2);
             _type = type;
             _myConstructionVector.GetConstructionVectors(_type);
-            FillMe();
             return this;
         }
 
-        public Floater WithColor(BlockColor color)
+        public Floater FillWithColor(BlockColor color)
         {
             _color = color;
             if(Center!= null) _volume.Cells[Center].Color = color;
             if(Cell1!= null) _volume.Cells[Cell1].Color = color;
             if(Cell2!= null) _volume.Cells[Cell2].Color = color;
             if(Cell3!= null) _volume.Cells[Cell3].Color = color;
+            FillMe();
             return this;
         }
 
@@ -127,30 +127,37 @@ namespace Game.Core
             _volume.ClearCellAtLocation(Cell2);
             _volume.ClearCellAtLocation(Cell3);    
         }
+
+        public void ReleaseBlocks()
+        {
+            _volume.FillCellAtLocation(Center,_color,false);
+            _volume.FillCellAtLocation(Cell1,_color,false);
+            _volume.FillCellAtLocation(Cell2,_color,false);
+            _volume.FillCellAtLocation(Cell3,_color,false);    
+        }
         
         
         //============== FLOATER MOVEMENT LOGIC ===============//
 
 
         #region Translation Logic
-        public void MoveDown()
+        public bool MoveDown()
         {
             //Checking if all the blocks can be moved to next position
             Vector3Int nextPosC = Center + Vector3Int.down;
-            if(CanMoveTo(nextPosC) == false) return;
+            if(CanMoveTo(nextPosC) == false) return false;
             Vector3Int nextPosC1 = Cell1 + Vector3Int.down;
-            if(CanMoveTo(nextPosC1) == false) return;
+            if(CanMoveTo(nextPosC1) == false) return false;
             Vector3Int nextPosC2 = Cell2 + Vector3Int.down;
-            if(CanMoveTo(nextPosC2) == false) return;
+            if(CanMoveTo(nextPosC2) == false) return false;
             Vector3Int nextPosC3 = Cell3 + Vector3Int.down;
-            if(CanMoveTo(nextPosC3) == false) return;
+            if(CanMoveTo(nextPosC3) == false) return false;
 
             //Move if all blocks can be moved
             ClearMe();
-            
             Center = nextPosC;
-
             FillMe();
+            return true;
         }
         
         public void MoveUp()
