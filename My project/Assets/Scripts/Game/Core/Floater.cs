@@ -1,6 +1,7 @@
 ﻿using System.Numerics;
 using Game.Core.Types;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using Vector3 = System.Numerics.Vector3;
 
 namespace Game.Core
@@ -263,7 +264,7 @@ namespace Game.Core
 
         public bool TryKick()
         {
-            //Shift To Contain
+            //Kick from walls
             while (MinXCell.x < 0) { Center += Vector3Int.right; }
             while (MaxXCell.x > _volume.Width -1 ) { Center += Vector3Int.left; }
             while (MinYCell.y < 0) { Center += Vector3Int.up; }
@@ -271,8 +272,22 @@ namespace Game.Core
             while (MinZCell.z < 0) { Center += Vector3Int.forward; }
             while (MaxZCell.z > _volume.Depth -1 ) { Center += Vector3Int.back; }
             
-            //Check if new configuration is Valid
+            //Kick from blocks
+            var movement_Dir  = new Vector3Int();
+            if (_volume.Cells[Cell1].Filled) movement_Dir += UnitRectVector(Center - Cell1);
+            if (_volume.Cells[Cell2].Filled) movement_Dir += UnitRectVector(Center - Cell2);
+            if (_volume.Cells[Cell3].Filled) movement_Dir += UnitRectVector(Center - Cell3);
+            Center += movement_Dir;
+
+                //Check if new configuration is Valid
             return CanMoveTo(Center) && CanMoveTo(Cell1) && CanMoveTo(Cell2) && CanMoveTo(Cell3);
+        }
+
+        private Vector3Int UnitRectVector(Vector3Int vector)
+        {
+            return new Vector3Int(Mathf.Clamp(vector.x,-1,1), 
+                                  Mathf.Clamp(vector.y,-1,1), 
+                                  Mathf.Clamp(vector.z,-1,1));
         }
 
         #endregion
@@ -282,10 +297,12 @@ namespace Game.Core
         public void RotateAlongZ()
         {
             ClearMe();
+            var start = Center;
             _myConstructionVector.RotateAlongZBy(BlockRotation.PiBy2);
             if (TryKick() == false)
             {
                 _myConstructionVector.RotateAlongZBy(BlockRotation._3PiBy2);
+                Center = start;
                 Debug.Log("Rotation Along Z Failed");
             }
             FillMe();
@@ -294,10 +311,12 @@ namespace Game.Core
         public void RotateAlongY()
         {
             ClearMe();
+            var start = Center;
             _myConstructionVector.RotateAlongYBy(BlockRotation.PiBy2);
             if (TryKick() == false)
             {
                 _myConstructionVector.RotateAlongYBy(BlockRotation._3PiBy2);
+                Center = start;
                 Debug.Log("Rotation Along Y Failed");
             }
             FillMe();
@@ -306,10 +325,12 @@ namespace Game.Core
         public void RotateAlongX()
         {
             ClearMe();
+            var start = Center;
             _myConstructionVector.RotateAlongXBy(BlockRotation.PiBy2);
             if (TryKick() == false)
             {
                 _myConstructionVector.RotateAlongXBy(BlockRotation._3PiBy2);
+                Center = start;
                 Debug.Log("Rotation Along X Failed");
             }
             FillMe();
