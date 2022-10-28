@@ -12,8 +12,10 @@ namespace Game.Core
         private IObservableDataSource<Volume> GameVolume;
         public VolumeRenderer VolumeRenderer;
         public HintBlockRenderer HintBlockRenderer;
+        public Transform GameView;
 
         public float floaterMoveTimeStep = 0.5f;
+        public float viewRotationsSpeed = 3f;
         private float floaterMovetimer;
 
         private Floater _activeFloater;
@@ -39,14 +41,22 @@ namespace Game.Core
 
         private void Update()
         {
-            if (Input.GetKeyDown(KeyCode.UpArrow)) _activeFloater.MoveUp();
-            else if (Input.GetKeyDown(KeyCode.W)) _activeFloater.MoveForward();
+            if (Input.GetKeyDown(KeyCode.W)) _activeFloater.MoveForward();
             else if (Input.GetKeyDown(KeyCode.S)) _activeFloater.MoveBack();
             else if (Input.GetKeyDown(KeyCode.A)) _activeFloater.MoveLeft();
             else if (Input.GetKeyDown(KeyCode.D)) _activeFloater.MoveRight();
             else if (Input.GetKeyDown(KeyCode.Z)) _activeFloater.RotateAlongZ();
             else if (Input.GetKeyDown(KeyCode.Y)) _activeFloater.RotateAlongY();
             else if (Input.GetKeyDown(KeyCode.X)) _activeFloater.RotateAlongX();
+            else if (Input.GetKey(KeyCode.RightArrow))
+            {
+                GameView.transform.eulerAngles += new Vector3(0, viewRotationsSpeed * Time.deltaTime, 0);
+            }
+            
+            else if (Input.GetKey(KeyCode.LeftArrow))
+            {
+                GameView.transform.eulerAngles += new Vector3(0, -viewRotationsSpeed * Time.deltaTime, 0);
+            }
             
             //Move down periodically
             floaterMovetimer += Time.deltaTime;
