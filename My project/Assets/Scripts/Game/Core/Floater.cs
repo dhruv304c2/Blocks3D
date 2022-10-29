@@ -1,4 +1,5 @@
-﻿using System.Numerics;
+﻿using System.Linq;
+using System.Numerics;
 using Game.Core.Types;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -128,7 +129,7 @@ namespace Game.Core
             _volume.ClearCellAtLocation(Cell3);    
         }
 
-        public void ReleaseBlocks()
+        public void FixBlocks()
         {
             _volume.FillCellAtLocation(Center,_color,false);
             _volume.FillCellAtLocation(Cell1,_color,false);
@@ -295,6 +296,39 @@ namespace Game.Core
             return new Vector3Int(Mathf.Clamp(vector.x,-1,1), 
                                   Mathf.Clamp(vector.y,-1,1), 
                                   Mathf.Clamp(vector.z,-1,1));
+        }
+
+        public void QuickDrop()
+        {
+            //Get all floaters
+            var floaters = _volume.Cells.Where(k => k.Value.IsFloater);
+
+            
+            if (floaters.Any())
+            {
+                //Get the offset for the highest colliding Floater
+                var offset = new Vector3Int(0,-_volume.Height,0);
+
+                foreach (var newHighestFloater in floaters)
+                {
+                    var s = newHighestFloater.Key;
+                    if (s.y > 0)
+                    {
+                        while (!_volume.Cells[s + Vector3Int.down].Filled || _volume.Cells[s + Vector3Int.down].IsFloater)
+                        {
+                            s += Vector3Int.down; 
+                            if(s.y == 0) break;
+                        }
+                    }
+                    var o = s - newHighestFloater.Key;
+                    if (o.y > offset.y) offset = o;
+                }
+
+                //Move center by the given offset
+                ClearMe();
+                Center += offset;
+                FillMe();
+            }
         }
 
         #endregion

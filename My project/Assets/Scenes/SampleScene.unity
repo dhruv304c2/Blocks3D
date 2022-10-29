@@ -845,6 +845,10 @@ PrefabInstance:
       propertyPath: m_LocalPosition.z
       value: -2.5
       objectReference: {fileID: 0}
+    - target: {fileID: 8030083644830501697, guid: bc2dbd82073f6624abe9ca830119f404, type: 3}
+      propertyPath: whiteBlockPrefab
+      value: 
+      objectReference: {fileID: 4071631489531197520, guid: 5412ad40505894b4189671a9cd98d0cf, type: 3}
     - target: {fileID: 8030083646337443608, guid: bc2dbd82073f6624abe9ca830119f404, type: 3}
       propertyPath: GameView
       value: 

@@ -24,13 +24,15 @@ namespace Game.Core.Renderers
             //Get all floaters
             var floaters = DataSource.Self.Cells.Where(k => k.Value.IsFloater);
 
+            
             if (floaters.Any())
             {
+                //Get the offset for the highest colliding Floater
                 var offset = new Vector3Int(0,-DataSource.Self.Height,0);
 
-                foreach (var newLowestFloater in floaters)
+                foreach (var newHighestFloater in floaters)
                 {
-                    var s = newLowestFloater.Key;
+                    var s = newHighestFloater.Key;
                     if (s.y > 0)
                     {
                         while (!DataSource.Self.Cells[s + Vector3Int.down].Filled || DataSource.Self.Cells[s + Vector3Int.down].IsFloater)
@@ -39,10 +41,11 @@ namespace Game.Core.Renderers
                             if(s.y == 0) break;
                         }
                     }
-                    var o = s - newLowestFloater.Key;
+                    var o = s - newHighestFloater.Key;
                     if (o.y > offset.y) offset = o;
                 }
 
+                //place the hints block based on the obtained offset from 
                 foreach (var floater in floaters)
                 {
                     var position = floater.Key + offset;

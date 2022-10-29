@@ -19,6 +19,7 @@ namespace Game.Core.Renderers
             if( !yellowBlockPrefab.Initialised ) yellowBlockPrefab.InitialisePool(500);
             if( !greenBlockPrefab.Initialised ) greenBlockPrefab.InitialisePool(500);
             if( !purpleBlockPrefab.Initialised ) purpleBlockPrefab.InitialisePool(500);
+            if( !whiteBlockPrefab.Initialised ) whiteBlockPrefab.InitialisePool(100);
         }
         
         //Data Renderer Implementation
@@ -61,6 +62,8 @@ namespace Game.Core.Renderers
                     return greenBlockPrefab;
                 case BlockColor.Purple:
                     return purpleBlockPrefab;
+                case BlockColor.White:
+                    return whiteBlockPrefab;
             }
     
             return null;
@@ -74,6 +77,7 @@ namespace Game.Core.Renderers
         public MonoPoolableBlock yellowBlockPrefab;
         public MonoPoolableBlock greenBlockPrefab;
         public MonoPoolableBlock purpleBlockPrefab;
+        public MonoPoolableBlock whiteBlockPrefab;
     }
 }
 

@@ -5,6 +5,7 @@
         Orange,
         Yellow,
         Green,
-        Purple
+        Purple,
+        White
     }
 }
