@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using System.Numerics;
+using Game.Core.Singletons;
 using Game.Core.Types;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -134,7 +135,11 @@ namespace Game.Core
             _volume.FillCellAtLocation(Center,_color,false);
             _volume.FillCellAtLocation(Cell1,_color,false);
             _volume.FillCellAtLocation(Cell2,_color,false);
-            _volume.FillCellAtLocation(Cell3,_color,false);    
+            _volume.FillCellAtLocation(Cell3,_color,false);
+
+            //End the game if the newly added blocks exceed the game limit
+            var maxY = Mathf.Max(Center.y, Cell1.y, Cell2.y, Cell3.y);
+            if(maxY >= GameDataProvider.GameHeight) GameDataProvider.Instance.EndGame();
         }
         
         

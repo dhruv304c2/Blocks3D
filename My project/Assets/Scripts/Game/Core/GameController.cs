@@ -2,8 +2,10 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Game.Core.GameInput;
 using Game.Core.Interface;
 using Game.Core.Renderers;
+using Game.Core.Singletons;
 using Game.Core.Types;
 using UnityEngine;
 using Random = System.Random;
@@ -27,38 +29,31 @@ namespace Game.Core
             GameVolume = new Volume(15, 6, 6);
             GameVolume.SubscribeTo(VolumeRenderer);
             GameVolume.SubscribeTo(HintBlockRenderer);
-            
-            /*for (int i = 0; i < 5; i++)
-            {
-                for (int j = 0; j < 5; j++)
-                {
-                    for (int k = 0; k < 5; k++)
-                    {
-                        if( i <= k && j<1)GameVolume.Self.FillCellAtLocation(new Vector3Int(i,j,k), BlockColor.Yellow);
-                    }
-                }
-            }*/
 
+            GameDataProvider.Instance.StartGame();
             SpwanNewFloater();
         }
 
         private void Update()
         {
-            if (Input.GetKeyDown(KeyCode.W)) _activeFloater.MoveForward();
-            else if (Input.GetKeyDown(KeyCode.S)) _activeFloater.MoveBack();
-            else if (Input.GetKeyDown(KeyCode.A)) _activeFloater.MoveLeft();
-            else if (Input.GetKeyDown(KeyCode.D)) _activeFloater.MoveRight();
-            else if (Input.GetKeyDown(KeyCode.Z)) _activeFloater.RotateAlongZ();
-            else if (Input.GetKeyDown(KeyCode.Y)) _activeFloater.RotateAlongY();
-            else if (Input.GetKeyDown(KeyCode.X)) _activeFloater.RotateAlongX();
-            else if (Input.GetKeyDown(KeyCode.DownArrow))
+            if(GameDataProvider.Instance.IsRunning == false) return; //If game is not running the update function would not execute
+            
+            if (Input.GetKeyDown(KeyCode.W) || GameInputManager.Instance.moveForwardTrigger.Value) _activeFloater.MoveForward();
+            else if (Input.GetKeyDown(KeyCode.S) || GameInputManager.Instance.moveBackwardTrigger.Value) _activeFloater.MoveBack();
+            else if (Input.GetKeyDown(KeyCode.A) || GameInputManager.Instance.moveLeftTrigger.Value) _activeFloater.MoveLeft();
+            else if (Input.GetKeyDown(KeyCode.D) || GameInputManager.Instance.moveRightTrigger.Value) _activeFloater.MoveRight();
+            else if (Input.GetKeyDown(KeyCode.Z) || GameInputManager.Instance.rotateZTrigger.Value) _activeFloater.RotateAlongZ();
+            else if (Input.GetKeyDown(KeyCode.Y) || GameInputManager.Instance.rotateYTrigger.Value) _activeFloater.RotateAlongY();
+            else if (Input.GetKeyDown(KeyCode.X) || GameInputManager.Instance.rotateXTrigger.Value) _activeFloater.RotateAlongX();
+            else if (Input.GetKeyDown(KeyCode.DownArrow) || GameInputManager.Instance.quickDropTrigger.Value )
             {
                 _activeFloater.QuickDrop();
                 _activeFloater.FixBlocks();
                 ClearCompletedLayers();
                 SpwanNewFloater();
             }
-            else if (Input.GetKey(KeyCode.RightArrow))
+            
+            if (Input.GetKey(KeyCode.RightArrow))
             {
                 GameView.transform.eulerAngles += new Vector3(0, viewRotationsSpeed * Time.deltaTime, 0);
             }
@@ -66,6 +61,12 @@ namespace Game.Core
             else if (Input.GetKey(KeyCode.LeftArrow))
             {
                 GameView.transform.eulerAngles += new Vector3(0, -viewRotationsSpeed * Time.deltaTime, 0);
+            }
+
+            else if (GameInputManager.GetAxis("RotateView").isDown == true)
+            {
+                //Debug.Log("Touch Detected");
+                GameView.transform.eulerAngles += new Vector3(0, GameInputManager.GetAxis("RotateView").value * Time.deltaTime * viewRotationsSpeed, 0);
             }
             
             //Move down periodically
@@ -88,14 +89,17 @@ namespace Game.Core
 
         private void SpwanNewFloater()
         {
-            Array values = Enum.GetValues(typeof(FloaterType));
-            Random random = new Random();
-            FloaterType randomFloater = (FloaterType)values.GetValue(random.Next(values.Length));
+            if (GameDataProvider.Instance.IsRunning)
+            {
+                Array values = Enum.GetValues(typeof(FloaterType));
+                Random random = new Random();
+                FloaterType randomFloater = (FloaterType)values.GetValue(random.Next(values.Length));
             
-            Array valuesColor = Enum.GetValues(typeof(BlockColor));
-            BlockColor randomColor = (BlockColor)values.GetValue(random.Next(valuesColor.Length -1)); //not including white color while spawning
+                Array valuesColor = Enum.GetValues(typeof(BlockColor));
+                BlockColor randomColor = (BlockColor)values.GetValue(random.Next(valuesColor.Length -1)); //not including white color while spawning
             
-            _activeFloater = new Floater().InVolume(GameVolume.Self,randomFloater).FillWithColor(randomColor);
+                _activeFloater = new Floater().InVolume(GameVolume.Self,randomFloater).FillWithColor(randomColor);
+            }
         }
 
         private void ClearCompletedLayers()
@@ -108,7 +112,11 @@ namespace Game.Core
 
             foreach (var level in distinctLevels)
             {
-                if (IsSurfaceIsComplete(level)) StartCoroutine(ClearLevel(level));
+                if (IsSurfaceIsComplete(level))
+                {
+                    StartCoroutine(ClearLevel(level));
+                    GameDataProvider.Instance.AddScore(1000);
+                }
             }
         }
 
