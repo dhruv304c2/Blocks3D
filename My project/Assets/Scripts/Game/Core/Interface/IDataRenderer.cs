@@ -1,14 +1,15 @@
-﻿using Unity.VisualScripting;
+﻿using Game.Core.Types;
+using Unity.VisualScripting;
 
 namespace Game.Core.Interface
 {
-    public interface IDataRenderer<T> : IDataService<T>
+    public interface IDataRenderer<T> : IEventListener<T>
     {
-        void RenderData();
+        void RenderData(T data, GameEvent gameEvent);
 
-        void IDataService<T>.DataService()
+        void IEventListener<T>.OnNotify(T data, GameEvent gameEvent)
         {
-            RenderData();
+            RenderData(data,gameEvent);
         }
     }
 }

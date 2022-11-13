@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Game.Core.Interface;
+using Game.Core.Types;
 using UnityEngine;
 
 //This Data Renderer is responsible for rendering the Hint blocks based on Volume data
@@ -14,49 +15,53 @@ namespace Game.Core.Renderers
         {
             if (!HintBlock.Initialised) HintBlock.InitialisePool(10);
         }
-
-        public IObservableDataSource<Volume> DataSource { get; set; }
-        public void RenderData()
+        
+        public void RenderData(Volume volume, GameEvent gameEvent)
         {
-            foreach (var b in ActiveHintBlocks) { b.Dispose();}
-            ActiveHintBlocks = new List<MonoPoolableBlock>();
-            
-            //Get all floaters
-            var floaters = DataSource.Self.Cells.Where(k => k.Value.IsFloater);
-
-            
-            if (floaters.Any())
+            switch (gameEvent)
             {
-                //Get the offset for the highest colliding Floater
-                var offset = new Vector3Int(0,-DataSource.Self.Height,0);
+                case GameEvent.Floater_Created:
+                    foreach (var b in ActiveHintBlocks) { b.Dispose();}
+                    ActiveHintBlocks = new List<MonoPoolableBlock>();
+            
+                    //Get all floaters
+                    var floaters = volume.Cells.Where(k => k.Value.IsFloater);
 
-                foreach (var newHighestFloater in floaters)
-                {
-                    var s = newHighestFloater.Key;
-                    if (s.y > 0)
+            
+                    if (floaters.Any())
                     {
-                        while (!DataSource.Self.Cells[s + Vector3Int.down].Filled || DataSource.Self.Cells[s + Vector3Int.down].IsFloater)
+                        //Get the offset for the highest colliding Floater
+                        var offset = new Vector3Int(0,-volume.Height,0);
+
+                        foreach (var newHighestFloater in floaters)
                         {
-                            s += Vector3Int.down; 
-                            if(s.y == 0) break;
+                            var s = newHighestFloater.Key;
+                            if (s.y > 0)
+                            {
+                                while (!volume.Cells[s + Vector3Int.down].Filled || volume.Cells[s + Vector3Int.down].IsFloater)
+                                {
+                                    s += Vector3Int.down; 
+                                    if(s.y == 0) break;
+                                }
+                            }
+                            var o = s - newHighestFloater.Key;
+                            if (o.y > offset.y) offset = o;
                         }
-                    }
-                    var o = s - newHighestFloater.Key;
-                    if (o.y > offset.y) offset = o;
-                }
 
-                //place the hints block based on the obtained offset from 
-                foreach (var floater in floaters)
-                {
-                    var position = floater.Key + offset;
-                    if (DataSource.Self.Cells[position].Filled == false)
-                    {
-                        var h = HintBlock.Spawn();
-                        h.transform.parent = transform;
-                        h.transform.localPosition = position;
-                        ActiveHintBlocks.Add(h);
+                        //place the hints block based on the obtained offset from 
+                        foreach (var floater in floaters)
+                        {
+                            var position = floater.Key + offset;
+                            if (volume.Cells[position].Filled == false)
+                            {
+                                var h = HintBlock.Spawn();
+                                h.transform.parent = transform;
+                                h.transform.localPosition = position;
+                                ActiveHintBlocks.Add(h);
+                            }
+                        }   
                     }
-                }   
+                    break;
             }
         }
 

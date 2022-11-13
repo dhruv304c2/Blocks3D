@@ -4,7 +4,7 @@ using UnityEngine.EventSystems;
 
 namespace Game.Core.GameInput
 {
-    public class MonoTouchAxisController : MonoBehaviour, IDragHandler, IEndDragHandler
+    public class MonoTouchAxisController : MonoBehaviour, IDragHandler, IPointerUpHandler, IPointerDownHandler
     {
         [SerializeField] private TouchAxis _myAxis;
         public AxisConstraint axisConstraints;
@@ -31,24 +31,25 @@ namespace Game.Core.GameInput
                     break;
             }
 
-            _myAxis.value = Mathf.Clamp(rawVal, -1, 1);
-
-            if (Math.Abs(_myAxis.value) <= deadZone && eventData.IsPointerMoving())
+            if (Mathf.Abs(rawVal) >= deadZone)
             {
-                _myAxis.value = 0;
-                _myAxis.isDown = false;
+                _myAxis.value = Mathf.Clamp(rawVal, -1, 1);
+                if (invertAxis == true) _myAxis.value = -_myAxis.value;
             }
             else
             {
-                _myAxis.isDown = true;
+                _myAxis.value = 0;
             }
-
-            if (invertAxis == true) _myAxis.value = -_myAxis.value;
         }
 
-        public void OnEndDrag(PointerEventData eventData)
+        public void OnPointerUp(PointerEventData eventData)
         {
             _myAxis.isDown = false;
+        }
+
+        public void OnPointerDown(PointerEventData eventData)
+        {
+            _myAxis.isDown = true;
         }
     }
 

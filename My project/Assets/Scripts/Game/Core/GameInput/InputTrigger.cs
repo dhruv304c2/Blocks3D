@@ -7,26 +7,17 @@ namespace Game.Core.GameInput
     public class InputTrigger
     {
         private bool _value = false;
-        public bool Value {
-            get
-            {
-                var val = _value;
-                if (_value == true) _value = false;
-                return val;
-            }
+
+        public void Trigger()
+        {
+            _value = true;
         }
 
-        public IEnumerator Trigger()
+        public bool CheckTrigger()
         {
-            if (Value == true) yield return null;
-            _value = true; 
-            yield return ResetTrigger();
-        }
-
-        private IEnumerator ResetTrigger()
-        {
-            yield return new WaitForSeconds(GameInputManager.TriggerResetTime);
+            var val = _value;
             _value = false;
+            return val;
         }
     }
     

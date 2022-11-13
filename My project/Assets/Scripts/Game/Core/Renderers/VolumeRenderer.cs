@@ -1,9 +1,6 @@
-using System.Collections;
 using System.Collections.Generic;
-using Game.Core;
 using Game.Core.Interface;
 using Game.Core.Types;
-using Unity.VisualScripting;
 using UnityEngine;
 
 
@@ -11,7 +8,7 @@ using UnityEngine;
 //The Renderer picks block from object pool and adds them to required locations 
 namespace Game.Core.Renderers
 {
-    public class VolumeRenderer : MonoBehaviour, IDataRenderer<Volume>
+    public class VolumeRenderer : MonoBehaviour, IDataRenderer<UnitCell>
     {
         void Awake()
         {
@@ -21,32 +18,22 @@ namespace Game.Core.Renderers
             if( !purpleBlockPrefab.Initialised ) purpleBlockPrefab.InitialisePool(500);
             if( !whiteBlockPrefab.Initialised ) whiteBlockPrefab.InitialisePool(100);
         }
-        
-        //Data Renderer Implementation
-        public IObservableDataSource<Volume> DataSource { get; set; }
-    
-        public void RenderData()
+
+        public void RenderData(UnitCell cell, GameEvent gameEvent)
         {
-            
-            //Disposing all active blocks and resetting the list
-            foreach (var block in ActiveBlocks)
+            switch (gameEvent)
             {
-                block.Dispose();
-            }
-    
-            ActiveBlocks = new List<MonoPoolableBlock>();
-            
-            foreach (var kvp in DataSource.Self.Cells)
-            {
-                if (kvp.Value.Filled)
-                {
-                    MonoPoolableBlock pool = GetBlock(kvp.Value.Color);
+                case GameEvent.Cell_Fill:
+                    MonoPoolableBlock pool = GetBlock(cell.Color);
                     var b = pool.Spawn();
                     var transform1 = b.transform;
                     transform1.parent = transform;
-                    transform1.localPosition = kvp.Key;
-                    ActiveBlocks.Add(b);
-                }
+                    transform1.localPosition = cell.Postiton;
+                    ActiveBlocks[cell.Postiton] = b;
+                    break;
+                case GameEvent.Cell_Clear:
+                    ActiveBlocks[cell.Postiton].Dispose();
+                    break;
             }
         }
     
@@ -69,7 +56,7 @@ namespace Game.Core.Renderers
             return null;
         }
         
-        private List<MonoPoolableBlock> ActiveBlocks = new List<MonoPoolableBlock>();
+        private Dictionary<Vector3, MonoPoolableBlock> ActiveBlocks = new Dictionary<Vector3, MonoPoolableBlock>();
         
         
         //Pool-able Blocks

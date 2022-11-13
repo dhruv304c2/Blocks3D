@@ -1,12 +1,13 @@
 ﻿using System;
+using System.Collections.Generic;
 using Game.Core.Interface;
+using Game.Core.Types;
 using UnityEngine;
 
 namespace Game.Core.Singletons
 {
-    public class GameDataProvider: Singleton<GameDataProvider>, IObservableDataSource<GameDataProvider>
+    public class GameDataProvider: Singleton<GameDataProvider>, IObservableDataSource<int>
     {
-        public Action OnDataSourceChanged { get; set; }
 
         private bool _isRunning;
         public bool IsRunning => _isRunning;
@@ -20,19 +21,21 @@ namespace Game.Core.Singletons
         public void StartGame()
         {
             _isRunning = true; 
-            OnDataSourceChanged?.Invoke();
+            ((IObservableDataSource<int>)this).Notify(_score,GameEvent.Layer_Clear);
         }
 
         public void EndGame()
         {
             _isRunning = false;
-            OnDataSourceChanged?.Invoke();
+            ((IObservableDataSource<int>)this).Notify(_score,GameEvent.End_Game);
         }
 
         public void AddScore(int score)
         {
             _score += score;
-            OnDataSourceChanged?.Invoke();
+            ((IObservableDataSource<int>)this).Notify(_score,GameEvent.Layer_Compleate);
         }
+
+        public List<IEventListener<int>> Listeners { get; set; }
     }
 }

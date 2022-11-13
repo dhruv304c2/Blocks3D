@@ -1,18 +1,20 @@
 ﻿using System;
+using System.Collections.Generic;
+using Game.Core.Types;
 using UnityEngine;
 
 namespace Game.Core.Interface
 {
     public interface IObservableDataSource<T>
     {
-        T Self => (T)this;
-        Action OnDataSourceChanged { get; set; }
+        List<IEventListener<T>> Listeners { get; set; }
 
-        public void SubscribeTo(IDataService<T> service)
+        public void Notify(T data, GameEvent gameEvent)
         {
-            service.DataSource = this;
-            OnDataSourceChanged ??= () => { };
-            OnDataSourceChanged += service.DataService;
+            foreach (var eventListener in Listeners)
+            {
+                eventListener.OnNotify(data,gameEvent);
+            }
         }
     }
 }

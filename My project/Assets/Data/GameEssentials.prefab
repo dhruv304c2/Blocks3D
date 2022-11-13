@@ -1205,8 +1205,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4213169a119440f399c442c1cd2e9b3f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  VolumeRenderer: {fileID: 8030083644830501697}
-  HintBlockRenderer: {fileID: 8030083645029166210}
+  volumeRenderer: {fileID: 8030083644830501697}
+  hintBlockRenderer: {fileID: 8030083645029166210}
   GameView: {fileID: 8030083644926611576}
   floaterMoveTimeStep: 1
-  viewRotationsSpeed: 100
+  viewRotationsSpeed: 300

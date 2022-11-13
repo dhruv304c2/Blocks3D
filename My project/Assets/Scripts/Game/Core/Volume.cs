@@ -6,11 +6,8 @@ using UnityEngine;
 
 namespace Game.Core
 {
-    public class Volume: IObservableDataSource<Volume>
+    public class Volume: IObservableDataSource<UnitCell>, IObservableDataSource<Volume>
     {
-        //Data Source Implementations
-        public Action OnDataSourceChanged { get; set; }
-        
         //Data
         private Dictionary<Vector3Int, UnitCell> _cells = new Dictionary<Vector3Int, UnitCell>();
         public Dictionary<Vector3Int, UnitCell> Cells => _cells;
@@ -22,6 +19,9 @@ namespace Game.Core
         public int Width => _width;
         
         private int _depth;
+        private Action<Volume, GameEvent> _onDataSourceChanged;
+        private List<IEventListener<UnitCell>> _listeners;
+        private List<IEventListener<Volume>> _listeners1;
         public int Depth => _depth;
         
         public Volume(int height, int width, int depth)
@@ -48,7 +48,9 @@ namespace Game.Core
             _cells[position].Fill(color, isFloater);
             try
             {
-                OnDataSourceChanged.Invoke();
+                ((IObservableDataSource<UnitCell>)this).Notify(Cells[position],GameEvent.Cell_Fill);
+                if(isFloater)
+                    ((IObservableDataSource<Volume>)this).Notify(this,GameEvent.Floater_Created);
             }
             catch (Exception e)
             {
@@ -63,7 +65,7 @@ namespace Game.Core
             _cells[position].Clear();
             try
             {
-                OnDataSourceChanged.Invoke();
+                ((IObservableDataSource<UnitCell>)this).Notify(Cells[position],GameEvent.Cell_Clear);
             }
             catch (Exception e)
             {
@@ -72,5 +74,17 @@ namespace Game.Core
             }
         }
 
+
+        List<IEventListener<UnitCell>> IObservableDataSource<UnitCell>.Listeners
+        {
+            get => _listeners;
+            set => _listeners = value;
+        }
+
+        List<IEventListener<Volume>> IObservableDataSource<Volume>.Listeners
+        {
+            get => _listeners1;
+            set => _listeners1 = value;
+        }
     }
 }

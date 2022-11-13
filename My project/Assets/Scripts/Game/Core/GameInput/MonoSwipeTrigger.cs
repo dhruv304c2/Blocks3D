@@ -1,23 +1,44 @@
-﻿using System;
-using Unity.VisualScripting;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.EventSystems;
-using UnityEngine.UIElements;
 
 namespace Game.Core.GameInput
 {
-    public class MonoObjectInputTrigger: MonoBehaviour, IPointerUpHandler
+    public class MonoSwipeTrigger: MonoBehaviour, IPointerUpHandler, IPointerDownHandler
     {
         public MoveType moveType;
+        public float swipeDistance;
+        public AxisConstraint axisConstraints;
+        public bool invert = false;
 
-        private void OnMouseUp()
+        private float startPositionX;
+        private float startPositionY;
+
+        public void OnPointerDown(PointerEventData eventData)
         {
-            Trigger();
+            startPositionX = eventData.position.x;
+            startPositionY = eventData.position.y;
         }
         
         public void OnPointerUp(PointerEventData eventData)
         {
-            Trigger();
+            float rawVal = 0;
+            
+            switch (axisConstraints)
+            {
+                case AxisConstraint.XAxis:
+                    rawVal = eventData.position.x - startPositionX;
+                    break;
+                case AxisConstraint.YAxis:
+                    rawVal = eventData.position.y - startPositionY;
+                    break;
+            }
+
+            if (invert) rawVal = -rawVal;
+
+            if (Mathf.Abs(rawVal) >= swipeDistance)
+            {
+                Trigger();
+            }
         }
         
         public void Trigger()
@@ -50,5 +71,7 @@ namespace Game.Core.GameInput
                     break;
             }
         }
+
+        
     }
 }

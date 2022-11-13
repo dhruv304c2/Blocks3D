@@ -14,9 +14,14 @@ namespace Game.Core
 {
     public class GameController: MonoBehaviour
     {
-        private IObservableDataSource<Volume> GameVolume;
-        public VolumeRenderer VolumeRenderer;
-        public HintBlockRenderer HintBlockRenderer;
+        private Volume GameVolume;
+        
+        public VolumeRenderer volumeRenderer;
+        public IDataRenderer<UnitCell> VolumeRenderer;
+
+        public HintBlockRenderer hintBlockRenderer;
+        public IDataRenderer<Volume> HintBlockRenderer;
+        
         public Transform GameView;
 
         public float floaterMoveTimeStep = 0.5f;
@@ -27,8 +32,12 @@ namespace Game.Core
         private void Start()
         {
             GameVolume = new Volume(15, 6, 6);
-            GameVolume.SubscribeTo(VolumeRenderer);
-            GameVolume.SubscribeTo(HintBlockRenderer);
+            
+            VolumeRenderer = volumeRenderer;
+            VolumeRenderer.SubscribeTo(GameVolume);
+
+            HintBlockRenderer = hintBlockRenderer;
+            HintBlockRenderer.SubscribeTo(GameVolume);
 
             GameDataProvider.Instance.StartGame();
             SpwanNewFloater();
@@ -38,14 +47,14 @@ namespace Game.Core
         {
             if(GameDataProvider.Instance.IsRunning == false) return; //If game is not running the update function would not execute
             
-            if (Input.GetKeyDown(KeyCode.W) || GameInputManager.Instance.moveForwardTrigger.Value) _activeFloater.MoveForward();
-            else if (Input.GetKeyDown(KeyCode.S) || GameInputManager.Instance.moveBackwardTrigger.Value) _activeFloater.MoveBack();
-            else if (Input.GetKeyDown(KeyCode.A) || GameInputManager.Instance.moveLeftTrigger.Value) _activeFloater.MoveLeft();
-            else if (Input.GetKeyDown(KeyCode.D) || GameInputManager.Instance.moveRightTrigger.Value) _activeFloater.MoveRight();
-            else if (Input.GetKeyDown(KeyCode.Z) || GameInputManager.Instance.rotateZTrigger.Value) _activeFloater.RotateAlongZ();
-            else if (Input.GetKeyDown(KeyCode.Y) || GameInputManager.Instance.rotateYTrigger.Value) _activeFloater.RotateAlongY();
-            else if (Input.GetKeyDown(KeyCode.X) || GameInputManager.Instance.rotateXTrigger.Value) _activeFloater.RotateAlongX();
-            else if (Input.GetKeyDown(KeyCode.DownArrow) || GameInputManager.Instance.quickDropTrigger.Value )
+            if (GameInputManager.Instance.moveForwardTrigger.CheckTrigger()) _activeFloater.MoveForward();
+            else if (GameInputManager.Instance.moveBackwardTrigger.CheckTrigger()) _activeFloater.MoveBack();
+            else if (GameInputManager.Instance.moveLeftTrigger.CheckTrigger()) _activeFloater.MoveLeft();
+            else if (GameInputManager.Instance.moveRightTrigger.CheckTrigger()) _activeFloater.MoveRight();
+            else if (GameInputManager.Instance.rotateZTrigger.CheckTrigger()) _activeFloater.RotateAlongZ();
+            else if (GameInputManager.Instance.rotateYTrigger.CheckTrigger()) _activeFloater.RotateAlongY();
+            else if (GameInputManager.Instance.rotateXTrigger.CheckTrigger()) _activeFloater.RotateAlongX();
+            else if (GameInputManager.Instance.quickDropTrigger.CheckTrigger())
             {
                 _activeFloater.QuickDrop();
                 _activeFloater.FixBlocks();
@@ -53,7 +62,7 @@ namespace Game.Core
                 SpwanNewFloater();
             }
             
-            if (Input.GetKey(KeyCode.RightArrow))
+            /*if (Input.GetKey(KeyCode.RightArrow))
             {
                 GameView.transform.eulerAngles += new Vector3(0, viewRotationsSpeed * Time.deltaTime, 0);
             }
@@ -61,12 +70,12 @@ namespace Game.Core
             else if (Input.GetKey(KeyCode.LeftArrow))
             {
                 GameView.transform.eulerAngles += new Vector3(0, -viewRotationsSpeed * Time.deltaTime, 0);
-            }
+            }*/
 
-            else if (GameInputManager.GetAxis("RotateView").isDown == true)
+            else if (GameInputManager.GetAxis("RotateView")?.isDown == true)
             {
                 //Debug.Log("Touch Detected");
-                GameView.transform.eulerAngles += new Vector3(0, GameInputManager.GetAxis("RotateView").value * Time.deltaTime * viewRotationsSpeed, 0);
+                GameView.transform.eulerAngles += new Vector3(0, GameInputManager.GetAxis("RotateView").value, 0);
             }
             
             //Move down periodically
@@ -98,7 +107,7 @@ namespace Game.Core
                 Array valuesColor = Enum.GetValues(typeof(BlockColor));
                 BlockColor randomColor = (BlockColor)values.GetValue(random.Next(valuesColor.Length -1)); //not including white color while spawning
             
-                _activeFloater = new Floater().InVolume(GameVolume.Self,randomFloater).FillWithColor(randomColor);
+                _activeFloater = new Floater().InVolume(GameVolume,randomFloater).FillWithColor(randomColor);
             }
         }
 
@@ -122,30 +131,30 @@ namespace Game.Core
 
         private IEnumerator ClearLevel(int level)
         {
-            var levelBlockPos = GameVolume.Self.Cells.Keys.Where(k => k.y == level);
+            var levelBlockPos = GameVolume.Cells.Keys.Where(k => k.y == level);
             Dictionary<Vector3Int, BlockColor> colorDic = new Dictionary<Vector3Int, BlockColor>();
             foreach (var blockPos in levelBlockPos)
             {
-                colorDic.Add(blockPos, GameVolume.Self.Cells[blockPos].Color);
-                GameVolume.Self.FillCellAtLocation(blockPos, BlockColor.White);
+                colorDic.Add(blockPos, GameVolume.Cells[blockPos].Color);
+                GameVolume.FillCellAtLocation(blockPos, BlockColor.White);
             }
             yield return new WaitForSeconds(0.1f);
             foreach (var blockPos in levelBlockPos)
             {
-                GameVolume.Self.ClearCellAtLocation(blockPos);
+                GameVolume.ClearCellAtLocation(blockPos);
             }
             
             // Dropping the blocks above down;
-            for (int j = level + 1; j < GameVolume.Self.Height; j++)
+            for (int j = level + 1; j < GameVolume.Height; j++)
             {
-                for (int i = 0; i < GameVolume.Self.Width; i++)
+                for (int i = 0; i < GameVolume.Width; i++)
                 {
-                    for (int k = 0; k < GameVolume.Self.Depth; k++)
+                    for (int k = 0; k < GameVolume.Depth; k++)
                     {
-                        if (GameVolume.Self.Cells[new Vector3Int(i, j, k)].Filled && !GameVolume.Self.Cells[new Vector3Int(i, j, k)].IsFloater)
+                        if (GameVolume.Cells[new Vector3Int(i, j, k)].Filled && !GameVolume.Cells[new Vector3Int(i, j, k)].IsFloater)
                         {
-                            GameVolume.Self.ClearCellAtLocation(new Vector3Int(i, j, k));
-                            GameVolume.Self.FillCellAtLocation(new Vector3Int(i, j-1, k), GameVolume.Self.Cells[new Vector3Int(i, j, k)].Color);
+                            GameVolume.ClearCellAtLocation(new Vector3Int(i, j, k));
+                            GameVolume.FillCellAtLocation(new Vector3Int(i, j-1, k), GameVolume.Cells[new Vector3Int(i, j, k)].Color);
                         }
                     }
                 }
@@ -154,11 +163,11 @@ namespace Game.Core
 
         private bool IsSurfaceIsComplete(int y)
         {
-            for (int i = 0; i < GameVolume.Self.Width; i++)
+            for (int i = 0; i < GameVolume.Width; i++)
             {
-                for (int k = 0; k < GameVolume.Self.Depth; k++)
+                for (int k = 0; k < GameVolume.Depth; k++)
                 {
-                    if (GameVolume.Self.Cells[new Vector3Int(i, y, k)].Filled == false)
+                    if (GameVolume.Cells[new Vector3Int(i, y, k)].Filled == false)
                     {
                         return false;
                     }
