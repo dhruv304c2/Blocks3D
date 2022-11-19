@@ -43,7 +43,7 @@ namespace Game.Core
             SpwanNewFloater();
         }
 
-        private void Update()
+        private void LateUpdate()
         {
             if(GameDataProvider.Instance.IsRunning == false) return; //If game is not running the update function would not execute
             
@@ -75,7 +75,7 @@ namespace Game.Core
             else if (GameInputManager.GetAxis("RotateView")?.isDown == true)
             {
                 //Debug.Log("Touch Detected");
-                GameView.transform.eulerAngles += new Vector3(0, GameInputManager.GetAxis("RotateView").value, 0);
+                GameView.transform.Rotate(Vector3.up,GameInputManager.GetAxis("RotateView").value * Time.deltaTime * viewRotationsSpeed);
             }
             
             //Move down periodically

@@ -24,6 +24,10 @@ namespace Game.Core.Renderers
             switch (gameEvent)
             {
                 case GameEvent.Cell_Fill:
+                    if (ActiveBlocks.ContainsKey(cell.Postiton)) //Dispose any existing block at this position
+                    {
+                        ActiveBlocks[cell.Postiton].Dispose(); 
+                    }
                     MonoPoolableBlock pool = GetBlock(cell.Color);
                     var b = pool.Spawn();
                     var transform1 = b.transform;

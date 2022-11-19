@@ -1421,7 +1421,6 @@ GameObject:
   - component: {fileID: 2146168430}
   - component: {fileID: 2146168429}
   - component: {fileID: 2146168431}
-  - component: {fileID: 2146168432}
   m_Layer: 5
   m_Name: TouchInput
   m_TagString: Untagged
@@ -1505,24 +1504,8 @@ MonoBehaviour:
   axisConstraints: 1
   axisName: RotateView
   deadZone: 0.2
-  sensitivity: 0.1
+  sensitivity: 0.25
   invertAxis: 1
---- !u!114 &2146168432
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2146168427}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ad7a35f9576b493e9b228250516eb554, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  moveType: 4
-  swipeDistance: 100
-  axisConstraints: 2
-  invert: 1
 --- !u!1001 &8030083646017846947
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1578,6 +1561,10 @@ PrefabInstance:
     - target: {fileID: 7981298631067368940, guid: bc2dbd82073f6624abe9ca830119f404, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8030083646337443608, guid: bc2dbd82073f6624abe9ca830119f404, type: 3}
+      propertyPath: viewRotationsSpeed
+      value: 1000
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_AddedGameObjects: []

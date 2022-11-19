@@ -3,42 +3,51 @@ using UnityEngine.EventSystems;
 
 namespace Game.Core.GameInput
 {
-    public class MonoSwipeTrigger: MonoBehaviour, IPointerUpHandler, IPointerDownHandler
+    public class MonoSwipeTrigger: MonoBehaviour, IPointerDownHandler, IPointerUpHandler
     {
         public MoveType moveType;
-        public float swipeDistance;
+        public float speed;
         public AxisConstraint axisConstraints;
         public bool invert = false;
 
         private float startPositionX;
         private float startPositionY;
 
+        private float startTime = 0;
+
         public void OnPointerDown(PointerEventData eventData)
         {
             startPositionX = eventData.position.x;
             startPositionY = eventData.position.y;
+            startTime = 0;
+            Debug.Log($"Enter at x: {eventData.position.x}, y: {eventData.position.y}");
         }
-        
+
         public void OnPointerUp(PointerEventData eventData)
         {
+            float timeElapsed = Time.time - startTime;
             float rawVal = 0;
             
             switch (axisConstraints)
             {
                 case AxisConstraint.XAxis:
-                    rawVal = eventData.position.x - startPositionX;
+                    rawVal = (eventData.position.x - startPositionX) / (timeElapsed);
                     break;
                 case AxisConstraint.YAxis:
-                    rawVal = eventData.position.y - startPositionY;
+                    rawVal = (eventData.position.y - startPositionY) / (timeElapsed);
                     break;
             }
 
             if (invert) rawVal = -rawVal;
 
-            if (Mathf.Abs(rawVal) >= swipeDistance)
+            if (Mathf.Abs(rawVal) >= speed)
             {
                 Trigger();
             }
+            
+            Debug.Log($"Exit at x: {eventData.position.x}, y: {eventData.position.y}");
+            Debug.Log($"Swipe Time {timeElapsed}");
+            Debug.Log($"Swipe speed {rawVal}");
         }
         
         public void Trigger()
@@ -71,7 +80,5 @@ namespace Game.Core.GameInput
                     break;
             }
         }
-
-        
     }
 }

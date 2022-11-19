@@ -4,7 +4,7 @@ using UnityEngine.EventSystems;
 
 namespace Game.Core.GameInput
 {
-    public class MonoTouchAxisController : MonoBehaviour, IDragHandler, IPointerUpHandler, IPointerDownHandler
+    public class MonoTouchAxisController : MonoBehaviour
     {
         [SerializeField] private TouchAxis _myAxis;
         public AxisConstraint axisConstraints;
@@ -18,38 +18,31 @@ namespace Game.Core.GameInput
             GameInputManager.RegisterTouchAxis(axisName, _myAxis);
         }
 
-        public void OnDrag(PointerEventData eventData)
+        public void Update()
         {
-            float rawVal = 0;
-            switch (axisConstraints)
+            if (Input.touchCount == 1)
             {
-                case AxisConstraint.XAxis:
-                    rawVal = eventData.delta.x * sensitivity;
-                    break;
-                case AxisConstraint.YAxis:
-                    rawVal = eventData.delta.y * sensitivity;
-                    break;
-            }
+                
+                Touch screenTouch = Input.GetTouch(0);
 
-            if (Mathf.Abs(rawVal) >= deadZone)
-            {
-                _myAxis.value = Mathf.Clamp(rawVal, -1, 1);
-                if (invertAxis == true) _myAxis.value = -_myAxis.value;
+                switch (axisConstraints)
+                {
+                    case AxisConstraint.XAxis:
+                        _myAxis.value = screenTouch.deltaPosition.x * sensitivity;
+                        break;
+                    case AxisConstraint.YAxis:
+                        _myAxis.value = screenTouch.deltaPosition.y * sensitivity;
+                        break;
+                }
+
+                if (invertAxis) _myAxis.value = -_myAxis.value;
+                
+                _myAxis.isDown = true;
             }
             else
             {
-                _myAxis.value = 0;
+                _myAxis.isDown = false;
             }
-        }
-
-        public void OnPointerUp(PointerEventData eventData)
-        {
-            _myAxis.isDown = false;
-        }
-
-        public void OnPointerDown(PointerEventData eventData)
-        {
-            _myAxis.isDown = true;
         }
     }
 
